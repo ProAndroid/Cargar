@@ -20,10 +20,10 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
-    private EditText nombre, apellido, edad, llegada, salida, email;
-    private Button btn;
-    private DatePickerDialog llega, sale, fechaEdad;
-    private Spinner spinner1;
+    public EditText nombre, apellido, etDni, llegada, salida, email;
+    public Button btn;
+    public DatePickerDialog llega, sale;
+    public Spinner spinner1;
 
 
     @Override
@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
         salida = (EditText) findViewById(R.id.etSalida);
         email = (EditText) findViewById(R.id.etEmail);
         btn = (Button) findViewById(R.id.btn);
-
+        etDni = (EditText)findViewById(R.id.etDni);
 
         llegada.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,15 +122,6 @@ public class MainActivity extends Activity {
 
         });
         spinner1 = (Spinner) findViewById(R.id.spinner);
-        String[] opciones = new String[10];
-        for (int i = 0; i < opciones.length; i++) {
-            opciones[i] = "Cabaña " + (i + 1);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, opciones);
-        spinner1.setAdapter(adapter);
-
-
     }
 
 
@@ -158,12 +149,19 @@ public class MainActivity extends Activity {
 
 
     public void cargar(View view) {
+        //Abrimos la base de datos y le pedimos las tablas.
         AdminSQLiteOpenHelper adminc = new AdminSQLiteOpenHelper(this,"cabana");
         AdminSQLiteOpenHelper admina = new AdminSQLiteOpenHelper(this,"Alquiladas");
         AdminSQLiteOpenHelper adminp = new AdminSQLiteOpenHelper(this,"Persona");
         SQLiteDatabase dbc = adminc.getWritableDatabase();
         SQLiteDatabase dba = admina.getWritableDatabase();
         SQLiteDatabase dbp = adminp.getWritableDatabase();
+        //Get a las variables para poder guardarlas.
+        String nomb = nombre.getText().toString();
+        String ape = apellido.getText().toString();
+        String mail = email.getText().toString();
+        int dni = Integer.parseInt(etDni.getText().toString());
+        
 
     }
 }
