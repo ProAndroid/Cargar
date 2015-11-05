@@ -2,6 +2,8 @@ package com.example.maxii.cargar;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,8 +16,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -121,7 +126,34 @@ public class MainActivity extends Activity {
 
 
         });
+        // todo no carga los datos en el spinner
+        AdminSQLiteOpenHelper adminc = new AdminSQLiteOpenHelper(this,"cabana");
+        AdminSQLiteOpenHelper admina = new AdminSQLiteOpenHelper(this,"Alquiladas");
+        SQLiteDatabase dbc = adminc.getWritableDatabase();
+        SQLiteDatabase dba = admina.getWritableDatabase();
+        List<String> labels = new ArrayList<>();
         spinner1 = (Spinner) findViewById(R.id.spinner);
+        Cursor fila = dba.rawQuery("select * from Alquiladas", null);
+        if (fila.moveToFirst()){ //si tiene algo en la tabla que ponga el cursor en la posicion 0
+            Cursor filaT = dbc.rawQuery("select * from cabanas where id='"+labels+"'", null);
+            if (filaT.moveToFirst()){
+                do {
+                    labels.add(filaT.getString(1)); //mientras va avanzando uno en uno agrega lo que tiene a un vector que se agrega al spinner
+                } while (filaT.moveToNext());
+            }
+        }else{ //Cuando no hay nada en la tabla de alquiladas que saque * lo de cabañas porque que no hay nada alquilado
+            Cursor filaT = dbc.rawQuery("select * from cabanas", null);
+            if (filaT.moveToFirst()) {
+                do {
+                    labels.add(filaT.getString(1));
+                } while (filaT.moveToNext());
+            }
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, labels);
+        dataAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner1.setAdapter(dataAdapter);
     }
 
 
@@ -156,12 +188,40 @@ public class MainActivity extends Activity {
         SQLiteDatabase dbc = adminc.getWritableDatabase();
         SQLiteDatabase dba = admina.getWritableDatabase();
         SQLiteDatabase dbp = adminp.getWritableDatabase();
+
+        ContentValues foo = new ContentValues();
+        foo.put("nombre", "hola");
+        dbc.insert("cabanas", null, foo);
+
         //Get a las variables para poder guardarlas.
-        String nomb = nombre.getText().toString();
-        String ape = apellido.getText().toString();
+        String name = nombre.getText().toString() + apellido.getText().toString() ;
         String mail = email.getText().toString();
         int dni = Integer.parseInt(etDni.getText().toString());
-        
-
+        String nombreCabana = "hola";   //spinner1.getSelectedItem().toString();
+        Cursor fil = dbc.rawQuery("select * from cabanas where nombre like '" + nombreCabana + "'", null);
+        fil.moveToFirst();
+        String id = fil.getString(0);
+        int aux_id = Integer.parseInt(id);
+        ContentValues toAlquilada = new ContentValues();
+        toAlquilada.put(Cabana.KEY_ID,aux_id);
+        toAlquilada.put(Alquiladas.KEY_checkin,llegada.getText().toString());
+        toAlquilada.put(Alquiladas.KEY_checkout, salida.getText().toString());
+        ContentValues toPersona = new ContentValues();
+        toPersona.put(Cabana.KEY_ID,aux_id);
+        toPersona.put(Persona.kEY_dni,dni);
+        toPersona.put(Persona.KEY_nombre,name);
+        toPersona.put(Persona.KEY_email, mail);
+        dba.insert("Alquiladas", null, toAlquilada);
+        dbp.insert("Persona", null, toPersona);
+        dba.close();
+        dbc.close();
+        dbp.close();
+        nombre.setText("");
+        apellido.setText("");
+        email.setText("");
+        etDni.setText("");
+        Toast.makeText(this,"Guardado correctamente",Toast.LENGTH_LONG).show();
+        System.out.println(toPersona.toString());
+        System.out.println(toAlquilada.toString());
     }
 }

@@ -19,29 +19,33 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE_CABANAS = "CREATE TABLE" + Cabana.TABLE
-                + Cabana.KEY_ID + "INTIGER PRIMARY KEY AUTOINCRIMENT,"
-                + Cabana.KEY_name + "TEXT,";
+        String CREATE_TABLE_CABANAS = "CREATE TABLE " + Cabana.TABLE
+                +"("
+                + Cabana.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + Cabana.KEY_name + "TEXT)";
         db.execSQL(CREATE_TABLE_CABANAS);
 
-        String CREATE_TABLE_ALQUILADAS = "CREATE TABLE" + Alquiladas.TABLE
-                + Alquiladas.KEY_ID + "INTIGER PRIMARY KEY,"
+        String CREATE_TABLE_ALQUILADAS = "CREATE TABLE " + Alquiladas.TABLE
+                +"("
+                + Alquiladas.KEY_ID + " INTEGER PRIMARY KEY,"
                 + Cabana.KEY_ID + "INTEGER,"
                 + Alquiladas.KEY_checkin + "TEXT,"
-                + Alquiladas.KEY_checkout + "TEXT";
+                + Alquiladas.KEY_checkout + "TEXT"
+                +")";
         db.execSQL(CREATE_TABLE_ALQUILADAS);
 
         String CREATE_TABLE_PERSONA="CREATE TABLE "+Persona.TABLE
-                +Persona.KEY_ID+ "INTIER PRIMARY,"
+                +"("
+                +Persona.kEY_dni+"INTEGER PRIMARY KEY,"
+                +Persona.KEY_ID+ "INTEGER,"
                 +Persona.KEY_nombre+"TEXT,"
-                +Persona.kEY_dni+"INT,"
-                +Persona.KEY_email+"TEXT";
+                +Persona.KEY_email+"TEXT)";
         db.execSQL(CREATE_TABLE_PERSONA);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IS EXISTS"+ Cabana.TABLE);
+        db.execSQL("DROP TABLE IS EXISTS "+ Cabana.TABLE);
         onCreate(db);
 
     }
