@@ -2,6 +2,7 @@ package com.example.maxii.cargar;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.format.DateUtils;
@@ -19,9 +20,9 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
-    private EditText nombre,apellido,edad,llegada,salida,email;
+    private EditText nombre, apellido, edad, llegada, salida, email;
     private Button btn;
-    private DatePickerDialog llega,sale, fechaEdad;
+    private DatePickerDialog llega, sale, fechaEdad;
     private Spinner spinner1;
 
 
@@ -29,42 +30,41 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        nombre=(EditText)findViewById(R.id.etNombre);
-        apellido=(EditText)findViewById(R.id.etApe);
-        llegada=(EditText)findViewById(R.id.etLlegada);
-        salida=(EditText)findViewById(R.id.etSalida);
-        email=(EditText)findViewById(R.id.etEmail);
-        btn=(Button)findViewById(R.id.btn);
-
+        nombre = (EditText) findViewById(R.id.etNombre);
+        apellido = (EditText) findViewById(R.id.etApe);
+        llegada = (EditText) findViewById(R.id.etLlegada);
+        salida = (EditText) findViewById(R.id.etSalida);
+        email = (EditText) findViewById(R.id.etEmail);
+        btn = (Button) findViewById(R.id.btn);
 
 
         llegada.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
-                final Calendar calendarL=Calendar.getInstance();
-                llega=new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
+                final Calendar calendarL = Calendar.getInstance();
+                llega = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
 
                     @Override
                     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
-                        calendarL.set(Calendar.YEAR,i);
-                        calendarL.set(Calendar.MONTH,i1);
-                        calendarL.set(Calendar.DAY_OF_MONTH,i2);
+                        calendarL.set(Calendar.YEAR, i);
+                        calendarL.set(Calendar.MONTH, i1);
+                        calendarL.set(Calendar.DAY_OF_MONTH, i2);
 
-                        String fecha= DateUtils.formatDateTime(view.getContext(),calendarL.getTimeInMillis(),DateUtils.FORMAT_NUMERIC_DATE);
+                        String fecha = DateUtils.formatDateTime(view.getContext(), calendarL.getTimeInMillis(), DateUtils.FORMAT_NUMERIC_DATE);
 
                         String[] tmpArray = fecha.split("/");
                         String ret = "";
 
                         String tmp = tmpArray[0];
                         tmpArray[0] = tmpArray[1];
-                        tmpArray[1]= tmp;
+                        tmpArray[1] = tmp;
 
                         for (int j = 0; j < tmpArray.length; j++) {
                             ret += tmpArray[j];
-                            if (!(j==tmpArray.length-1)){
-                                ret +="/";
+                            if (!(j == tmpArray.length - 1)) {
+                                ret += "/";
 
                             }
                         }
@@ -72,72 +72,66 @@ public class MainActivity extends Activity {
                         llegada.setText(ret);
 
                     }
-                },calendarL.get(Calendar.YEAR),calendarL.get(Calendar.MONTH),calendarL.get(Calendar.DAY_OF_MONTH));
+                }, calendarL.get(Calendar.YEAR), calendarL.get(Calendar.MONTH), calendarL.get(Calendar.DAY_OF_MONTH));
 
                 llega.show();
             }
 
 
-
         });
 
 
+        salida.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
 
-    salida.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(final View view) {
+                final Calendar calendarS = Calendar.getInstance();
+                sale = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
 
-            final Calendar calendarS=Calendar.getInstance();
-            sale=new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
-                @Override
-                public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                        calendarS.set(Calendar.YEAR, i);
+                        calendarS.set(Calendar.MONTH, i1);
+                        calendarS.set(Calendar.DAY_OF_MONTH, i2);
 
-                    calendarS.set(Calendar.YEAR,i);
-                    calendarS.set(Calendar.MONTH,i1);
-                    calendarS.set(Calendar.DAY_OF_MONTH,i2);
+                        String fecha = DateUtils.formatDateTime(view.getContext(), calendarS.getTimeInMillis(), DateUtils.FORMAT_NUMERIC_DATE);
 
-                    String fecha= DateUtils.formatDateTime(view.getContext(),calendarS.getTimeInMillis(),DateUtils.FORMAT_NUMERIC_DATE);
+                        String[] tmpArray = fecha.split("/");
+                        String ret = "";
 
-                    String[] tmpArray = fecha.split("/");
-                    String ret = "";
+                        String tmp = tmpArray[0];
+                        tmpArray[0] = tmpArray[1];
+                        tmpArray[1] = tmp;
 
-                    String tmp = tmpArray[0];
-                    tmpArray[0] = tmpArray[1];
-                    tmpArray[1]= tmp;
+                        for (int j = 0; j < tmpArray.length; j++) {
+                            ret += tmpArray[j];
+                            if (!(j == tmpArray.length - 1)) {
+                                ret += "/";
 
-                    for (int j = 0; j < tmpArray.length; j++) {
-                        ret += tmpArray[j];
-                        if (!(j==tmpArray.length-1)){
-                            ret +="/";
-
+                            }
                         }
+                        salida.setText(ret);
+
                     }
-                    salida.setText(ret);
+                }, calendarS.get(Calendar.YEAR), calendarS.get(Calendar.MONTH), calendarS.get(Calendar.DAY_OF_MONTH));
 
-                }
-            },calendarS.get(Calendar.YEAR),calendarS.get(Calendar.MONTH),calendarS.get(Calendar.DAY_OF_MONTH));
-
-            sale.show();
-        }
+                sale.show();
+            }
 
 
-
-    });
-        spinner1=(Spinner)findViewById(R.id.spinner);
-        String[]opciones = new String[10];
+        });
+        spinner1 = (Spinner) findViewById(R.id.spinner);
+        String[] opciones = new String[10];
         for (int i = 0; i < opciones.length; i++) {
-            opciones[i] = "Cabaña "+ (i+1);
+            opciones[i] = "Cabaña " + (i + 1);
         }
 
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,opciones);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, opciones);
         spinner1.setAdapter(adapter);
 
 
-
-
     }
-
 
 
     @Override
@@ -160,5 +154,16 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void cargar(View view) {
+        AdminSQLiteOpenHelper adminc = new AdminSQLiteOpenHelper(this,"cabana");
+        AdminSQLiteOpenHelper admina = new AdminSQLiteOpenHelper(this,"Alquiladas");
+        AdminSQLiteOpenHelper adminp = new AdminSQLiteOpenHelper(this,"Persona");
+        SQLiteDatabase dbc = adminc.getWritableDatabase();
+        SQLiteDatabase dba = admina.getWritableDatabase();
+        SQLiteDatabase dbp = adminp.getWritableDatabase();
+
     }
 }
